@@ -76,10 +76,12 @@ subject2category = {
 
 
 class MMLUEval(Eval):
-    def __init__(self, num_examples: int | None = None):
-        df = pandas.read_csv(
-            bf.BlobFile("https://openaipublic.blob.core.windows.net/simple-evals/mmlu.csv")
-        )
+    def __init__(self, num_examples: int | None = None, language: str = "EN-US"):
+        if language != "EN-US":
+            url = f"az://oaidatasets2/evallib/mmlu_human_translated_fixed/simple-evals/mmlu_{language}.csv"
+        else:
+            url = "https://openaipublic.blob.core.windows.net/simple-evals/mmlu.csv"
+        df = pandas.read_csv(bf.BlobFile(url))
         examples = [row.to_dict() for _, row in df.iterrows()]
         if num_examples:
             examples = random.Random(0).sample(examples, num_examples)
